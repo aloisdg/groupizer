@@ -7,7 +7,37 @@
     <title>Groupizer</title>
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 115 115%22><text y=%22.9em%22 font-size=%2290%22>🧑‍🤝‍🧑</text></svg>">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        li {
+            color: var(--code);
+        }
+
+        ol {
+            counter-reset: LIST-ITEMS 0;
+        }
+
+        ul {
+            background-color: var(--background-alt);
+            margin-right: 6px;
+            margin-bottom: 6px;
+            position: relative;
+        }
+
+        ul:before {
+            position: absolute;
+            content: counter(LIST-ITEMS);
+            counter-increment: LIST-ITEMS;
+            padding-right: 0.25em;
+            font-style: italic;
+            font-weight: bold;
+            bottom: 3px;
+            right: 3px;
+            color: var(--text-muted)
+        }
+    </style>
 </head>
 
 <body>
@@ -22,16 +52,21 @@ claude
 dany
 eloise
 farah</textarea>
-    <label for="size">Size of each group</label><input type="number" id="size" value="2" min="1" />
-    <button id="createGroup">
-        create group
-    </button>
-    <div id="result">
-
+    <div class="flex flex-wrap sm:flex-row flex-col">
+        <select id="method">
+            <option value="0">Group count</option>
+            <option value="1">People count per group</option>
+        </select>
+        <input type="number" id="size" value="2" min="1" />
+        <button id="createGroup" class="flex-1">
+            create groups
+        </button>
     </div>
+    <ol id="result" class="flex flex-wrap sm:flex-row flex-col">
+    </ol>
 
     <script>
-        function shuffle(a) {
+        const shuffle = a => {
             for (let i = a.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [a[i], a[j]] = [a[j], a[i]];
@@ -44,11 +79,29 @@ farah</textarea>
                 length: Math.ceil(array.length / size)
             }, (value, index) => array.slice(index * size, index * size + size));
 
-        createGroup.onclick = () => {
+        const deal = (cards, n) => {
+            let i = 0;
+            const chunks = [...Array(n)].map(_ => []);
+            cards.forEach(x => {
+                chunks[i % n].push(x);
+                i++;
+            });
+            return chunks;
+        };
+
+        const render = () => {
+            if (students.value.length === 0) return;
             result.innerHTML = "";
-            const items = chunk(shuffle(students.value.split("\n")), parseInt(size.value));
+            const lines = students.value.split("\n").filter(Boolean);
+            const sizeValue = parseInt(size.value);
+            const shuffledLines = shuffle(lines);
+            const items = method.value === "0"
+                ? deal(shuffledLines, sizeValue)
+                : chunk(shuffledLines, sizeValue);
+
             items.forEach(item => {
                 const ul = document.createElement("ul");
+                ul.classList.add("w-full", "md:w-80", "shadow-md", "rounded-lg", "p-3");
                 item.forEach(x => {
                     const li = document.createElement("li");
                     li.textContent = x;
@@ -57,6 +110,10 @@ farah</textarea>
                 result.appendChild(ul);
             })
         }
+
+        size.onchange = render;
+        method.onchange = render;
+        createGroup.onclick = render;
 
     </script>
 </body>
