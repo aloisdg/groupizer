@@ -46,23 +46,23 @@
             🧑‍🤝‍🧑 Groupizer
         </h1>
     </header>
-    <label for="students">People to group</label><textarea id="students">alois
+    <label for="students">People to group</label><textarea id="students" data-cy="source">alois
 betty
 claude
 dany
 eloise
 farah</textarea>
     <div class="flex flex-wrap sm:flex-row flex-col">
-        <select id="method">
+        <select id="method" data-cy="method">
             <option value="0">Group count</option>
             <option value="1">People count per group</option>
         </select>
-        <input type="number" id="size" value="2" min="1" />
-        <button id="createGroup" class="flex-1">
+        <input type="number" data-cy="size" id="size" value="2" min="1" />
+        <button id="createGroup" data-cy="create-group" class="flex-1">
             create groups
         </button>
     </div>
-    <ol id="result" class="flex flex-wrap sm:flex-row flex-col">
+    <ol id="result" data-cy="result" class="flex flex-wrap sm:flex-row flex-col">
     </ol>
 
     <script>
