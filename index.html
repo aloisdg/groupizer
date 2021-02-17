@@ -1,0 +1,64 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groupizer</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 115 115%22><text y=%22.9em%22 font-size=%2290%22>🧑‍🤝‍🧑</text></svg>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+</head>
+
+<body>
+    <header>
+        <h1>
+            🧑‍🤝‍🧑 Groupizer
+        </h1>
+    </header>
+    <label for="students">People to group</label><textarea id="students">alois
+        betty
+        claude
+        dany
+        eloise
+        farah</textarea>
+    <label for="size">Size of each group</label><input type="number" id="size" value="2" min="1" />
+    <button id="createGroup">
+        create group
+    </button>
+    <div id="result">
+
+    </div>
+
+    <script>
+        function shuffle(a) {
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        const chunk = (array, size) =>
+            Array.from({
+                length: Math.ceil(array.length / size)
+            }, (value, index) => array.slice(index * size, index * size + size));
+
+        createGroup.onclick = () => {
+            result.innerHTML = "";
+            const items = chunk(shuffle(students.value.split("\n")), parseInt(size.value));
+            items.forEach(item => {
+                const ul = document.createElement("ul");
+                item.forEach(x => {
+                    const li = document.createElement("li");
+                    li.textContent = x;
+                    ul.appendChild(li);
+                })
+                result.appendChild(ul);
+            })
+        }
+
+    </script>
+</body>
+
+</html>
